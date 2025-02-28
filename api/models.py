@@ -3,8 +3,10 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
     pass
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -19,6 +21,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Order(models.Model):
     class StatusChoices(models.TextChoices):
@@ -41,7 +44,11 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='items'  # must match the name in serializer
+    )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
 
