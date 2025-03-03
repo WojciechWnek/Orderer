@@ -2,12 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('json-products/', views.json_product_list),
-    path('json-products/<int:pk>/', views.json_product_detail),
+    path('function-products/info/', views.product_info),
 
-    path('products/', views.product_list),
-    path('products/<int:pk>/', views.product_detail),
-    path('orders/', views.order_list),
+    # DFR class based view
+    path('products/', views.ProductListAPIView.as_view()),
+    path('products/<int:product_id>/', views.ProductDetailAPIView.as_view()),
+    path('orders/', views.OrderListAPIView.as_view()),
 
-    path('products/info/', views.product_info),
 ]
