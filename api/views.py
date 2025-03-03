@@ -1,9 +1,8 @@
 from django.db.models import Max
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import ProductSerializer, OrderSerializer, ProductInfoSerializer
 from api.models import Product, Order, OrderItem
@@ -34,6 +33,7 @@ class UserOrderListAPIView(generics.ListAPIView):
         "items__product",
     ).all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
 
     # override class bse generic view queryset to match one user
     def get_queryset(self):
