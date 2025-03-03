@@ -28,6 +28,20 @@ class OrderListAPIView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
 
+class UserOrderListAPIView(generics.ListAPIView):
+    queryset = Order.objects.prefetch_related(
+        "items",
+        "items__product",
+    ).all()
+    serializer_class = OrderSerializer
+
+    # override class bse generic view queryset to match one user
+    def get_queryset(self):
+        user = self.request.user
+        qs = super().get_queryset()
+        return qs.filter(user=user)
+
+
 @api_view(["GET"])
 def product_info(request):
     products = Product.objects.all()
