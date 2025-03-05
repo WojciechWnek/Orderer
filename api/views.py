@@ -14,6 +14,7 @@ from api.models import Product, Order, OrderItem
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework import viewsets
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
@@ -55,27 +56,37 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return super().get_permissions()
 
 
-class OrderListAPIView(generics.ListAPIView):
+class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.prefetch_related(
         "items",
         "items__product",
     ).all()
     serializer_class = OrderSerializer
+    permission_classes = [AllowAny]
+    pagination_class = None
 
 
-class UserOrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related(
-        "items",
-        "items__product",
-    ).all()
-    serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
-
-    # override class bse generic view queryset to match one user
-    def get_queryset(self):
-        user = self.request.user
-        qs = super().get_queryset()
-        return qs.filter(user=user)
+# class OrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related(
+#         "items",
+#         "items__product",
+#     ).all()
+#     serializer_class = OrderSerializer
+#
+#
+# class UserOrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related(
+#         "items",
+#         "items__product",
+#     ).all()
+#     serializer_class = OrderSerializer
+#     permission_classes = [IsAuthenticated]
+#
+#     # override class bse generic view queryset to match one user
+#     def get_queryset(self):
+#         user = self.request.user
+#         qs = super().get_queryset()
+#         return qs.filter(user=user)
 
 
 class ProductInfoAPIView(APIView):
