@@ -9,7 +9,7 @@ from rest_framework.permissions import (
 from rest_framework.views import APIView
 
 from api.filters import ProductFilter, InStockFilterBackend, OrderFilter
-from api.serializers import ProductSerializer, OrderSerializer, ProductInfoSerializer
+from api.serializers import ProductSerializer, OrderSerializer, ProductInfoSerializer, OrderCreateSerializer
 from api.models import Product, Order, OrderItem
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -70,26 +70,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
     ]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderCreateSerializer
+        return super().get_serializer_class()
+
     def get_queryset(self):
         qs = super().get_queryset()
         if not self.request.user.is_staff:
             qs = qs.filter(user=self.request.user)
         return qs
-
-
-# class UserOrderListAPIView(generics.ListAPIView):
-#     queryset = Order.objects.prefetch_related(
-#         "items",
-#         "items__product",
-#     ).all()
-#     serializer_class = OrderSerializer
-#     permission_classes = [IsAuthenticated]
-#
-#     # override class bse generic view queryset to match one user
-#     def get_queryset(self):
-#         user = self.request.user
-#         qs = super().get_queryset()
-#         return qs.filter(user=user)
 
 
 class ProductInfoAPIView(APIView):
