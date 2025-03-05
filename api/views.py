@@ -8,6 +8,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.views import APIView
 
+from api.filters import ProductFilter
 from api.serializers import ProductSerializer, OrderSerializer, ProductInfoSerializer
 from api.models import Product, Order, OrderItem
 
@@ -15,6 +16,7 @@ from api.models import Product, Order, OrderItem
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filterset_class = ProductFilter
 
     def get_permissions(self):
         self.permission_classes = [AllowAny]
